@@ -1,6 +1,7 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import { useKeycloak } from "@react-keycloak/web";
 
+// noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
@@ -9,5 +10,11 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <Welcome />;
+  const { keycloak } = useKeycloak()
+
+  if (!keycloak.authenticated) {
+    return (<button className="btn btn-primary" onClick={() => keycloak.login()}>Login</button>)
+  } else {
+    return (<button className="btn btn-secondary" onClick={() => keycloak.logout()}>Logout</button>)
+  }
 }

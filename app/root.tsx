@@ -10,6 +10,12 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
+import { ReactKeycloakProvider } from "@react-keycloak/web";
+import keycloak from "~/keycloak";
+import type { KeycloakInitOptions } from "keycloak-js";
+import React from "react";
+
+// noinspection JSUnusedGlobalSymbols
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -23,7 +29,9 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+// noinspection JSUnusedGlobalSymbols
 export function Layout({ children }: { children: React.ReactNode }) {
+  // noinspection HtmlRequiredTitleElement
   return (
     <html lang="en">
       <head>
@@ -42,9 +50,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  // noinspection SpellCheckingInspection
+  let initOptions: KeycloakInitOptions = {
+    pkceMethod: 'S256'
+  }
+
+  return (
+    <ReactKeycloakProvider
+      authClient={keycloak}
+      initOptions={initOptions}
+    >
+      <Outlet />
+    </ReactKeycloakProvider>
+  );
 }
 
+// noinspection JSUnusedGlobalSymbols
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";
