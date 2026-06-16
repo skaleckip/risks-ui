@@ -1,15 +1,20 @@
 import React from "react";
 import { useKeycloak } from "@react-keycloak/web";
+import { Outlet } from "react-router";
 
+// noinspection JSUnusedGlobalSymbols
 export default function Protected(): React.ReactElement {
-  const { keycloak, initialized } = useKeycloak()
+  const { initialized, keycloak } = useKeycloak();
 
-  if (!keycloak.authenticated) {
-    keycloak.login()
-    return (<button className="btn btn-secondary">I should be protected!</button>)
+  if (!initialized) {
+    // Here will be a loading indicator
+    return <></>
   }
 
-  return (
-    <button className="btn btn-secondary">I am protected!</button>
-  )
+  if (keycloak.authenticated) {
+    return <Outlet />;
+  } else {
+    keycloak.login().then();
+    return <></>;
+  }
 }
