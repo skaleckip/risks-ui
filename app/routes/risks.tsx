@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { Route } from "../../.react-router/types/app/routes/+types/home";
+import { useAxios } from "~/utils/hooks";
 
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
@@ -11,6 +12,23 @@ export function meta({}: Route.MetaArgs) {
 
 // noinspection JSUnusedGlobalSymbols
 export default function Risks(): React.ReactElement {
+  const [risks, setRisks] = useState<any[]>([])
+  const axiosInstance = useAxios("http://localhost:8080/api")
+
+  useEffect(() => {
+    if (axiosInstance != null && axiosInstance.current != null) {
+      axiosInstance.current.get("/risks").then((response) => {
+        if (response.status === 200) {
+          setRisks(response.data as any[]);
+        }
+      });
+    }
+
+    return () => {
+      setRisks([])
+    }
+  }, [axiosInstance])
+
   return (
     <table className="table table-zebra">
       <thead>
@@ -25,33 +43,17 @@ export default function Risks(): React.ReactElement {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Store fire</td>
-          <td>Fireman</td>
-          <td>Tiny</td>
-          <td>Huge</td>
-          <td>TH</td>
-          <td>No</td>
-          <td>Urgent</td>
-        </tr>
-        <tr>
-          <td>Store key loss</td>
-          <td>Doorman</td>
-          <td>Low</td>
-          <td>Moderate</td>
-          <td>SM</td>
-          <td>Yes</td>
-          <td>-</td>
-        </tr>
-        <tr>
-          <td>Head loss</td>
-          <td>Manager</td>
-          <td>Significant</td>
-          <td>Huge</td>
-          <td>SH</td>
-          <td>No</td>
-          <td>Urgent</td>
-        </tr>
+        {risks.map(risk => (
+          <tr>
+            <td>{risk.name}</td>
+            <td>Fireman</td>
+            <td>Tiny</td>
+            <td>Huge</td>
+            <td>TH</td>
+            <td>No</td>
+            <td>Urgent</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   )
