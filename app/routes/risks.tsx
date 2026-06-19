@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import type { Route } from "../../.react-router/types/app/routes/+types/home";
-import { useAxios } from "~/utils/hooks";
+import { useApiGetRisks } from "~/hooks/api-risks";
 
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
@@ -12,22 +12,16 @@ export function meta({}: Route.MetaArgs) {
 
 // noinspection JSUnusedGlobalSymbols
 export default function Risks(): React.ReactElement {
-  const [risks, setRisks] = useState<any[]>([])
-  const axiosInstance = useAxios("http://localhost:8080/api")
 
-  useEffect(() => {
-    if (axiosInstance != null && axiosInstance.current != null) {
-      axiosInstance.current.get("/risks").then((response) => {
-        if (response.status === 200) {
-          setRisks(response.data as any[]);
-        }
-      });
-    }
+  const { risksPage, loading, error } = useApiGetRisks()
 
-    return () => {
-      setRisks([])
-    }
-  }, [axiosInstance])
+  if (loading) {
+    return (<p>Loading ...</p>)
+  }
+
+  if (error) {
+    return (<p>Failed to read data, check your browsers console!</p>)
+  }
 
   return (
     <table className="table table-zebra">
@@ -43,7 +37,7 @@ export default function Risks(): React.ReactElement {
         </tr>
       </thead>
       <tbody>
-        {risks.map(risk => (
+        {risksPage.items.map(risk => (
           <tr>
             <td>{risk.name}</td>
             <td>Fireman</td>
