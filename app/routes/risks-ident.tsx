@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 import React from "react";
 import type { Route } from "../../.react-router/types/app/routes/+types/home";
 import { useNormanAxios } from "~/hooks/norman-axios";
@@ -7,12 +9,12 @@ import type { PageDto } from "~/models/shared";
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Norman - Risks" },
+    { title: "Norman - RisksIdent" },
     { name: "description", content: "Risk management" },
   ];
 }
 
-export default function Risks(): React.ReactElement {
+export default function RisksIdent(): React.ReactElement {
   const url = encodeURI('/risks?pageNumber=0&pageSize=10&name=%');
   const [{ data, loading, error }] = useNormanAxios<PageDto<RiskDto>>(url);
 
@@ -30,11 +32,6 @@ export default function Risks(): React.ReactElement {
         <tr>
           <th>Risk name</th>
           <th>Risk owner</th>
-          <th>Probability</th>
-          <th>Loss</th>
-          <th>Level</th>
-          <th>Accepted</th>
-          <th>Treatment Priority</th>
         </tr>
       </thead>
       <tbody>
@@ -42,11 +39,6 @@ export default function Risks(): React.ReactElement {
           <tr>
             <td>{risk.name}</td>
             <td>Fireman</td>
-            <td>Tiny</td>
-            <td>Huge</td>
-            <td>TH</td>
-            <td>No</td>
-            <td>Urgent</td>
           </tr>
         ))}
       </tbody>
