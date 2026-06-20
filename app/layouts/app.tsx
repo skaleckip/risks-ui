@@ -59,6 +59,9 @@ function PrivateLayout() {
           <label htmlFor="my-drawer-4" aria-label="open sidebar" className="btn btn-square btn-ghost">
             <SidebarOpenIcon />
           </label>
+          <div className="flex-none">
+            <ChessKingIcon />
+          </div>
           <span className="flex-1">
             Norman
           </span>
@@ -148,6 +151,8 @@ function ChessKingIcon({ ...restProps }: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg"
          viewBox="0 0 512 512"
+         fill="currentColor"
+         stroke="currentColor"
          className="my-1.5 inline-block size-5" {...restProps}>
       <g>
         <path d="M243.358,82.765h25.27c0,0-1.722-18.991-1.722-29.826c10.817,0,31.13,3.087,31.13,3.087V28.034

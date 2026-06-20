@@ -7,8 +7,7 @@ export default function Protected(): React.ReactElement {
   const { initialized, keycloak } = useKeycloak();
 
   if (!initialized) {
-    // Here will be a loading indicator
-    return <></>
+    return <>Loading...</>
   }
 
   if (keycloak.authenticated) {
