@@ -2,13 +2,11 @@ import React from "react";
 import { useKeycloak } from "@react-keycloak/web";
 import { Outlet } from "react-router";
 
-// noinspection JSUnusedGlobalSymbols
 export default function Protected(): React.ReactElement {
   const { initialized, keycloak } = useKeycloak();
 
   if (!initialized) {
-    // Here will be a loading indicator
-    return <></>
+    return <>Loading...</>
   }
 
   if (keycloak.authenticated) {

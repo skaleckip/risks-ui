@@ -1,6 +1,8 @@
 import React from "react";
 import type { Route } from "../../.react-router/types/app/routes/+types/home";
-import { useApiGetRisks } from "~/hooks/api-risks";
+import { useNormanAxios } from "~/hooks/norman-axios";
+import type { RiskDto } from "~/models/risks";
+import type { PageDto } from "~/models/shared";
 
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
@@ -10,10 +12,9 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-// noinspection JSUnusedGlobalSymbols
 export default function Risks(): React.ReactElement {
-
-  const { risksPage, loading, error } = useApiGetRisks()
+  const url = encodeURI('/risks?pageNumber=0&pageSize=10&name=%');
+  const [{ data, loading, error }] = useNormanAxios<PageDto<RiskDto>>(url);
 
   if (loading) {
     return (<p>Loading ...</p>)
@@ -37,7 +38,7 @@ export default function Risks(): React.ReactElement {
         </tr>
       </thead>
       <tbody>
-        {risksPage.items.map(risk => (
+        {data?.items.map(risk => (
           <tr>
             <td>{risk.name}</td>
             <td>Fireman</td>

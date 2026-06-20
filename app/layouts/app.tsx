@@ -2,16 +2,9 @@ import React, { type SVGProps } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { useKeycloak } from "@react-keycloak/web";
 
-// noinspection JSUnusedGlobalSymbols
 export default function AppLayout(): React.ReactElement {
-  // const { initialized, keycloak } = useKeycloak()
-  const { keycloak } = useKeycloak()
-
-  // if (!initialized) {
-  //   return (<div>Loading...</div>);
-  // }
-
-  return keycloak.authenticated
+  const { initialized, keycloak } = useKeycloak()
+  return initialized && keycloak.authenticated
     ? <PrivateLayout />
     : <PublicLayout />
 }
@@ -22,7 +15,6 @@ function PublicLayout() {
   return (
     <div className="container mx-auto h-screen flex flex-col">
       <div className="navbar bg-base-100 gap-2">
-        {/* Just to see how an SVG icon would look like */}
         <div className="flex-none">
           <ChessKingIcon />
         </div>
@@ -59,6 +51,9 @@ function PrivateLayout() {
           <label htmlFor="my-drawer-4" aria-label="open sidebar" className="btn btn-square btn-ghost">
             <SidebarOpenIcon />
           </label>
+          <div className="flex-none">
+            <ChessKingIcon />
+          </div>
           <span className="flex-1">
             Norman
           </span>
@@ -66,8 +61,7 @@ function PrivateLayout() {
             <button
               className="btn btn-ghost btn-primary"
               onClick={() => keycloak.logout({
-                // Todo, this might not work with base URL
-                redirectUri: window.location.origin,
+                redirectUri: window.location.origin + import.meta.env.BASE_URL,
               })}>
               Logout
             </button>
@@ -148,6 +142,8 @@ function ChessKingIcon({ ...restProps }: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg"
          viewBox="0 0 512 512"
+         fill="currentColor"
+         stroke="currentColor"
          className="my-1.5 inline-block size-5" {...restProps}>
       <g>
         <path d="M243.358,82.765h25.27c0,0-1.722-18.991-1.722-29.826c10.817,0,31.13,3.087,31.13,3.087V28.034
