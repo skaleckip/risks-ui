@@ -3,8 +3,10 @@
 import React from "react";
 import type { Route } from "../../.react-router/types/app/routes/+types/home";
 import { useNormanAxios } from "~/hooks/norman-axios";
-import type { RiskDto } from "~/models/risks";
+import type { RiskWideDto } from "~/models/risks";
 import type { PageDto } from "~/models/shared";
+import { RiskList } from "~/components/risk-list";
+import { RiskListForIdentification } from "~/components/risk-list-ident";
 
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
@@ -15,8 +17,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function RisksIdent(): React.ReactElement {
-  const url = encodeURI('/risks?pageNumber=0&pageSize=10&name=%');
-  const [{ data, loading, error }] = useNormanAxios<PageDto<RiskDto>>(url);
+  const knownSystemVersion = 'edbb7444-14e1-4da2-ad77-255099326e51'
+  const url = encodeURI(`/system-versions/${knownSystemVersion}/risks?pageNumber=0&pageSize=10`);
+  const [{ data, loading, error }] = useNormanAxios<PageDto<RiskWideDto>>(url);
 
   if (loading) {
     return (<p>Loading ...</p>)
@@ -27,21 +30,6 @@ export default function RisksIdent(): React.ReactElement {
   }
 
   return (
-    <table className="table table-zebra">
-      <thead>
-        <tr>
-          <th>Risk name</th>
-          <th>Risk owner</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data?.items.map(risk => (
-          <tr>
-            <td>{risk.name}</td>
-            <td>Fireman</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <RiskListForIdentification risks={data?.items ?? []} />
   )
 }
