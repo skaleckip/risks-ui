@@ -7,8 +7,9 @@ export default [
     {
       file: "routes/protected.tsx",
       children: [
-        route("risks-ident", "routes/risks-ident.tsx"),
-        route("risks-assess", "routes/risks-assess.tsx"),
+        route("risks-ident/:systemVersionId", "routes/risks-ident.tsx"),
+        route("risks-assess/:systemVersionId", "routes/risks-assess.tsx"),
+        route(":id", "routes/system-versions.tsx")
       ]
     }
   ])

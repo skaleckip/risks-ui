@@ -1,24 +1,22 @@
 // noinspection DuplicatedCode
 
 import React from "react";
-import type { Route } from "../../.react-router/types/app/routes/+types/home";
+import type { Route } from "./+types/risks-ident";
 import { useNormanAxios } from "~/hooks/norman-axios";
 import type { RiskWideDto } from "~/models/risks";
 import type { PageDto } from "~/models/shared";
-import { RiskList } from "~/components/risk-list";
 import { RiskListForIdentification } from "~/components/risk-list-ident";
 
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Norman - RisksIdent" },
-    { name: "description", content: "Risk management" },
+    { title: "Norman - Identify risks" },
+    { name: "description", content: "Lists of identified risks" },
   ];
 }
 
-export default function RisksIdent(): React.ReactElement {
-  const knownSystemVersion = 'edbb7444-14e1-4da2-ad77-255099326e51'
-  const url = encodeURI(`/system-versions/${knownSystemVersion}/risks?pageNumber=0&pageSize=10`);
+export default function RisksIdent({ params }: Route.ComponentProps): React.ReactElement {
+  const url = encodeURI(`/system-versions/${params.systemVersionId}/risks?pageNumber=0&pageSize=10`);
   const [{ data, loading, error }] = useNormanAxios<PageDto<RiskWideDto>>(url);
 
   if (loading) {

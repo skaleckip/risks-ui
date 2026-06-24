@@ -1,23 +1,22 @@
 // noinspection DuplicatedCode
 
 import React from "react";
-import type { Route } from "../../.react-router/types/app/routes/+types/home";
+import type { Route } from "./+types/risks-assess";
 import { useNormanAxios } from "~/hooks/norman-axios";
 import type { RiskWideDto } from "~/models/risks";
 import type { PageDto } from "~/models/shared";
-import { RiskList } from "~/components/risk-list";
+import { RiskListAssess } from "~/components/risk-list-assess";
 
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Norman - RisksIdent" },
-    { name: "description", content: "Risk management" },
+    { title: "Norman - Assess risks" },
+    { name: "description", content: "List of risks to assess" },
   ];
 }
 
-export default function Risks(): React.ReactElement {
-  const knownSystemVersion = 'edbb7444-14e1-4da2-ad77-255099326e51'
-  const url = encodeURI(`/system-versions/${knownSystemVersion}/risks?pageNumber=0&pageSize=10`);
+export default function Risks({ params }: Route.ComponentProps): React.ReactElement {
+  const url = encodeURI(`/system-versions/${params.systemVersionId}/risks?pageNumber=0&pageSize=10`);
   const [{ data, loading, error }] = useNormanAxios<PageDto<RiskWideDto>>(url);
 
   if (loading) {
@@ -29,6 +28,6 @@ export default function Risks(): React.ReactElement {
   }
 
   return (
-    <RiskList risks={data?.items ?? []} />
+    <RiskListAssess risks={data?.items ?? []} />
   )
 }

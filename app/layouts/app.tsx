@@ -1,6 +1,7 @@
 import React, { type SVGProps } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { useKeycloak } from "@react-keycloak/web";
+import type { KeycloakTokenParsed } from "keycloak-js";
 
 export default function AppLayout(): React.ReactElement {
   const { initialized, keycloak } = useKeycloak()
@@ -43,6 +44,8 @@ function PrivateLayout() {
   const { keycloak } = useKeycloak()
   const navigate = useNavigate()
 
+  const capitals = getCapitals(keycloak.tokenParsed)
+
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
@@ -57,6 +60,11 @@ function PrivateLayout() {
           <span className="flex-1">
             Norman
           </span>
+          <div className="avatar avatar-placeholder">
+            <div className="bg-neutral text-neutral-content w-12 rounded-full">
+              <span>{capitals}</span>
+            </div>
+          </div>
           <div>
             <button
               className="btn btn-ghost btn-primary"
@@ -88,10 +96,10 @@ function PrivateLayout() {
             {keycloak.hasRealmRole("auditor") &&
               <li>
                 <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                        data-tip="Identified risks"
-                        onClick={() => navigate("/risks-ident")}>
+                        data-tip="Identify risks"
+                        onClick={() => navigate("/system-versions")}>
                   <PinIcon />
-                  <span className="is-drawer-close:hidden">Identified risks</span>
+                  <span className="is-drawer-close:hidden">Identify risks</span>
                 </button>
               </li>
             }
@@ -109,6 +117,15 @@ function PrivateLayout() {
       </div>
     </div>
   )
+}
+
+function getCapitals(token: KeycloakTokenParsed | undefined): string {
+  if (token == null) return '??'
+  const firstName: string = token['given_name'] ?? '?'
+  const firstCapital = firstName.charAt(0).toUpperCase()
+  const lastName: string = token['family_name'] ?? '?'
+  const lastCapital = lastName.charAt(0).toUpperCase()
+  return `${firstCapital}${lastCapital}`
 }
 
 function SidebarOpenIcon({ ...restProps }: SVGProps<SVGSVGElement>) {

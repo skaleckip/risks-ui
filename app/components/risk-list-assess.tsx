@@ -4,7 +4,8 @@ import React from "react";
 export interface RiskListProps {
   risks: RiskWideDto[]
 }
-export function RiskList({risks}: RiskListProps ): React.ReactElement {
+
+export function RiskListAssess({risks}: RiskListProps ): React.ReactElement {
   return (
     <table className="table table-zebra">
       <thead>
