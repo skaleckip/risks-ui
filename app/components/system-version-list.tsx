@@ -23,24 +23,27 @@ export function SystemVersionList({ systemVersions }: SystemVersionListProps): R
       </thead>
       <tbody>
         {systemVersions.map(systemVersion => (
-          <tr>
+          <tr key={systemVersion.id}>
             <td>{systemVersion.customerName}</td>
             <td>{systemVersion.systemClass}</td>
             <td>{systemVersion.validFrom}</td>
-            <td>
+            <td className="flex flex-row gap-2">
               {keycloak.hasRealmRole("auditor") ? (
                 <button
-                  onClick={() => navigate("/risk-ident")}
+                  onClick={() => navigate("/risks-criteria/" + systemVersion.id)}
+                  className="btn btn-primary">
+                  Criteria
+                </button>
+              ) : <></>
+              }
+              {keycloak.hasRealmRole("auditor") ? (
+                <button
+                  onClick={() => navigate("/risks-ident/" + systemVersion.id)}
                   className="btn btn-primary">
                   Identify risks
                 </button>
               ) : <></>
               }
-              <button
-                onClick={() => navigate("/risk-assess")}
-                className="btn btn-primary">
-                Assess risks
-              </button>
             </td>
           </tr>
         ))}

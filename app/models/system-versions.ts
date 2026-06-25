@@ -4,3 +4,24 @@ export interface SystemVersionDto {
   systemClass: 'ISMS' | 'QMS'
   validFrom: string
 }
+
+export interface ProbabilityClassDto {
+  id: string
+  code: string
+  name: string
+  description: string
+}
+
+export interface ImpactClassDto {
+  id: string
+  code: string
+  name: string
+  description: string
+}
+
+export interface RiskLevelDto {
+  id: string
+  probabilityClass: ProbabilityClassDto
+  impactClass: ImpactClassDto
+  level: number
+}

@@ -21,7 +21,7 @@ export function RiskListAssess({risks}: RiskListProps ): React.ReactElement {
       </thead>
       <tbody>
         {risks.map(risk => (
-          <tr>
+          <tr key={risk.id}>
             <td>{risk.name}</td>
             <td>{risk.description}</td>
             <td>{risk.ownerName}</td>

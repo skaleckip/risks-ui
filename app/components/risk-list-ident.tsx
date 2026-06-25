@@ -17,7 +17,7 @@ export function RiskListForIdentification({risks}: RiskListProps ): React.ReactE
       </thead>
       <tbody>
         {risks.map(risk => (
-          <tr>
+          <tr key={risk.id}>
             <td>{risk.name}</td>
             <td>{risk.ownerName}</td>
             <td>{risk.ownerUsername}</td>

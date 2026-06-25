@@ -23,6 +23,6 @@ export default function SystemVersions(): React.ReactElement {
   }
 
   return (
-    <SystemVersionList systemVersions={data?.items ?? []} />
+    <SystemVersionList systemVersions={data ?? []} />
   )
 }

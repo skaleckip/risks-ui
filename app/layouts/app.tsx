@@ -45,6 +45,7 @@ function PrivateLayout() {
   const navigate = useNavigate()
 
   const capitals = getCapitals(keycloak.tokenParsed)
+  const userName = getUsername(keycloak.tokenParsed)
 
   return (
     <div className="drawer lg:drawer-open">
@@ -96,22 +97,24 @@ function PrivateLayout() {
             {keycloak.hasRealmRole("auditor") &&
               <li>
                 <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                        data-tip="Identify risks"
+                        data-tip="Normative systems"
                         onClick={() => navigate("/system-versions")}>
                   <PinIcon />
-                  <span className="is-drawer-close:hidden">Identify risks</span>
+                  <span className="is-drawer-close:hidden">Normative systems</span>
                 </button>
               </li>
             }
 
-            <li>
-              <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                      data-tip="RisksIdent to assess"
-                      onClick={() => navigate("/risks-assess")}>
-                <RisksIcon />
-                <span className="is-drawer-close:hidden">Risks to assess</span>
-              </button>
-            </li>
+            { userName &&
+              <li>
+                <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                        data-tip="Assess risks"
+                        onClick={() => navigate("/risks-assess/" + userName)}>
+                  <RisksIcon />
+                  <span className="is-drawer-close:hidden">Assess risks</span>
+                </button>
+              </li>
+            }
           </ul>
         </div>
       </div>
@@ -126,6 +129,11 @@ function getCapitals(token: KeycloakTokenParsed | undefined): string {
   const lastName: string = token['family_name'] ?? '?'
   const lastCapital = lastName.charAt(0).toUpperCase()
   return `${firstCapital}${lastCapital}`
+}
+
+function getUsername(token: KeycloakTokenParsed | undefined): string | undefined {
+  if (token == null) return undefined
+  return token['preferred_username'] ?? undefined
 }
 
 function SidebarOpenIcon({ ...restProps }: SVGProps<SVGSVGElement>) {

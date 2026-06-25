@@ -1,14 +1,4 @@
-export interface ProbabilityClassDto {
-  code: string;
-  name: string;
-  description: string;
-}
-
-export interface ImpactClassDto {
-  code: string;
-  name: string;
-  description: string;
-}
+import type { ImpactClassDto, ProbabilityClassDto } from "~/models/system-versions";
 
 export interface RiskWideDto {
   id: string
