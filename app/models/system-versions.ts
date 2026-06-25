@@ -5,6 +5,13 @@ export interface SystemVersionDto {
   validFrom: string
 }
 
+export interface RiskAreaDto {
+  id: string
+  code: string
+  name: string
+  description: string
+}
+
 export interface ProbabilityClassDto {
   id: string
   code: string

@@ -7,6 +7,7 @@ import { ProbabilityClassList } from "~/components/probability-class-list";
 import { ImpactClassList } from "~/components/impact-class-list";
 import { RiskLevelList } from "~/components/risk-level-list";
 import type { ImpactClassDto, ProbabilityClassDto, RiskLevelDto } from "~/models/system-versions";
+import { RiskAreaList } from "~/components/risk-area-list";
 
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
@@ -18,21 +19,24 @@ export function meta({}: Route.MetaArgs) {
 
 export default function RisksCriteria({ params }: Route.ComponentProps): React.ReactElement {
   const [tabIndex, setTabIndex] = useState(0)
-  const tabCnPro = classNames({ 'tab': true, 'tab-active': tabIndex === 0 })
-  const tabCnImp = classNames({ 'tab': true, 'tab-active': tabIndex === 1 })
-  const tabCnEvl = classNames({ 'tab': true, 'tab-active': tabIndex === 2 })
+  const tabCnAre = classNames({ 'tab': true, 'tab-active': tabIndex === 0 })
+  const tabCnPro = classNames({ 'tab': true, 'tab-active': tabIndex === 1 })
+  const tabCnImp = classNames({ 'tab': true, 'tab-active': tabIndex === 2 })
+  const tabCnEvl = classNames({ 'tab': true, 'tab-active': tabIndex === 3 })
 
   return (
     <>
       <div role="tablist" className="tabs tabs-lift">
-        <a role="tab" className={tabCnPro} onClick={() => setTabIndex(0)}>Probability</a>
-        <a role="tab" className={tabCnImp} onClick={() => setTabIndex(1)}>Impact</a>
-        <a role="tab" className={tabCnEvl} onClick={() => setTabIndex(2)}>Level</a>
+        <a role="tab" className={tabCnAre} onClick={() => setTabIndex(0)}>Risk areas</a>
+        <a role="tab" className={tabCnPro} onClick={() => setTabIndex(1)}>Probability classes</a>
+        <a role="tab" className={tabCnImp} onClick={() => setTabIndex(2)}>Impact classes</a>
+        <a role="tab" className={tabCnEvl} onClick={() => setTabIndex(3)}>Risk levels</a>
       </div>
 
-      {tabIndex === 0 ? <ProbabilityClasses systemVersionId={params.systemVersionId} /> : <></>}
-      {tabIndex === 1 ? <ImpactClasses systemVersionId={params.systemVersionId} /> : <></>}
-      {tabIndex === 2 ? <RiskLevels systemVersionId={params.systemVersionId} /> : <></>}
+      {tabIndex === 0 ? <RiskAreas systemVersionId={params.systemVersionId} /> : <></>}
+      {tabIndex === 1 ? <ProbabilityClasses systemVersionId={params.systemVersionId} /> : <></>}
+      {tabIndex === 2 ? <ImpactClasses systemVersionId={params.systemVersionId} /> : <></>}
+      {tabIndex === 3 ? <RiskLevels systemVersionId={params.systemVersionId} /> : <></>}
     </>
   )
 }
@@ -52,6 +56,25 @@ function ProbabilityClasses({ systemVersionId }: ProbabilityClassesProps): React
 
   return (
     <ProbabilityClassList classes={data ?? []} />
+  )
+}
+
+interface RiskAreasProps {
+  systemVersionId: string;
+}
+
+function RiskAreas({ systemVersionId }: RiskAreasProps): React.ReactElement {
+  const url = encodeURI(`/system-versions/${systemVersionId}/risk-areas`);
+  const [{ data, error }] = useNormanAxios<ImpactClassDto[]>(url);
+
+  // No loading, to avoid flickering on tab switching
+
+  if (error) {
+    return (<p>Failed to read data, check your browsers console!</p>)
+  }
+
+  return (
+    <RiskAreaList areas={data ?? []} />
   )
 }
 
