@@ -6,7 +6,6 @@ import { useNormanAxios } from "~/hooks/norman-axios";
 import type { RiskWideDto } from "~/models/risks";
 import type { PageDto } from "~/models/shared";
 import { RiskListAssess } from "~/components/risk-list-assess";
-import { useKeycloak } from "@react-keycloak/web";
 
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
