@@ -1,21 +1,18 @@
 import React from "react";
-import { useKeycloak } from "@react-keycloak/web";
 import { Outlet } from "react-router";
+import { useAuth } from "react-oidc-context";
 
 export default function Protected(): React.ReactElement {
-  const { initialized, keycloak } = useKeycloak();
+  const auth = useAuth();
 
-  if (!initialized) {
+  if (auth.isLoading) {
     return <>Loading...</>
   }
 
-  if (keycloak.authenticated) {
+  if (auth.isAuthenticated) {
     return <Outlet />;
   } else {
-    keycloak.login({
-      // Todo, Should we redirect if the route is allowed for the user?
-      redirectUri: window.location.origin + import.meta.env.BASE_URL
-    }).then();
+    auth.signinRedirect().then();
     return <></>;
   }
 }

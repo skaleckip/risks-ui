@@ -1,17 +1,18 @@
 import React, { type SVGProps } from "react";
 import { Outlet, useNavigate } from "react-router";
-import { useKeycloak } from "@react-keycloak/web";
-import type { KeycloakTokenParsed } from "keycloak-js";
+import { useAuth } from "react-oidc-context";
+import useAxios from "axios-hooks";
+import type { User } from "oidc-client-ts";
 
-export default function AppLayout(): React.ReactElement {
-  const { initialized, keycloak } = useKeycloak()
-  return initialized && keycloak.authenticated
+export default function Layout(): React.ReactElement {
+  const auth = useAuth()
+  return !auth.isLoading && auth.isAuthenticated
     ? <PrivateLayout />
     : <PublicLayout />
 }
 
 function PublicLayout() {
-  const { keycloak } = useKeycloak()
+  const auth = useAuth()
 
   return (
     <div className="container mx-auto h-screen flex flex-col">
@@ -27,7 +28,7 @@ function PublicLayout() {
         <div className="flex-none">
           <button
             className="btn btn-primary btn-ghost"
-            onClick={() => keycloak.login()}>
+            onClick={() => auth.signinRedirect()}>
             Login
           </button>
         </div>
@@ -41,11 +42,15 @@ function PublicLayout() {
 }
 
 function PrivateLayout() {
-  const { keycloak } = useKeycloak()
+  const auth = useAuth()
   const navigate = useNavigate()
 
-  const capitals = getCapitals(keycloak.tokenParsed)
-  const userName = getUsername(keycloak.tokenParsed)
+  // We will ask backand if are allowed to show some options
+  const url = encodeURI(`/ui/system-versions`);
+  const [{ data, loading, error }] = useAxios<Boolean>(url)
+
+  const capitals = userCapitals(auth.user)
+  const userName = auth.user?.profile?.preferred_username ?? ''
 
   return (
     <div className="drawer lg:drawer-open">
@@ -69,9 +74,7 @@ function PrivateLayout() {
           <div>
             <button
               className="btn btn-ghost btn-primary"
-              onClick={() => keycloak.logout({
-                redirectUri: window.location.origin + import.meta.env.BASE_URL,
-              })}>
+              onClick={() => auth.signoutRedirect()}>
               Logout
             </button>
           </div>
@@ -94,7 +97,7 @@ function PrivateLayout() {
               </button>
             </li>
 
-            {keycloak.hasRealmRole("auditor") &&
+            {(!loading && !error && data) &&
               <li>
                 <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                         data-tip="Normative systems"
@@ -105,7 +108,7 @@ function PrivateLayout() {
               </li>
             }
 
-            { userName &&
+            {userName &&
               <li>
                 <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                         data-tip="Assess risks"
@@ -122,18 +125,13 @@ function PrivateLayout() {
   )
 }
 
-function getCapitals(token: KeycloakTokenParsed | undefined): string {
-  if (token == null) return '??'
-  const firstName: string = token['given_name'] ?? '?'
+export function userCapitals(user: User | null | undefined): string {
+  if (user == null || user.profile == null) return '??'
+  const firstName: string = user.profile?.given_name ?? '?'
   const firstCapital = firstName.charAt(0).toUpperCase()
-  const lastName: string = token['family_name'] ?? '?'
+  const lastName: string = user.profile?.family_name ?? '?'
   const lastCapital = lastName.charAt(0).toUpperCase()
   return `${firstCapital}${lastCapital}`
-}
-
-function getUsername(token: KeycloakTokenParsed | undefined): string | undefined {
-  if (token == null) return undefined
-  return token['preferred_username'] ?? undefined
 }
 
 function SidebarOpenIcon({ ...restProps }: SVGProps<SVGSVGElement>) {
@@ -200,7 +198,7 @@ function ChessKingIcon({ ...restProps }: SVGProps<SVGSVGElement>) {
   )
 }
 
-export function PinIcon({ ...restProps }: SVGProps<SVGSVGElement>) {
+function PinIcon({ ...restProps }: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg"
          viewBox="0 0 24 24"

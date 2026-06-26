@@ -3,10 +3,10 @@ import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, 
 import type { Route } from "./+types/root";
 import "./app.css";
 
-import { ReactKeycloakProvider } from "@react-keycloak/web";
-import keycloak from "~/keycloak";
-import type { KeycloakInitOptions } from "keycloak-js";
 import React from "react";
+import { AuthProvider, type AuthProviderProps, useAuth } from "react-oidc-context";
+import axios from "axios";
+import { configure } from "axios-hooks";
 
 // noinspection JSUnusedGlobalSymbols
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -29,19 +29,50 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  // noinspection SpellCheckingInspection
-  let initOptions: KeycloakInitOptions = {
-    pkceMethod: 'S256'
+  let authority = import.meta.env.APP_AUTHORITY ?? 'http://localhost:9090/realms/norman';
+  let clientId = import.meta.env.APP_CLIENT_ID ?? 'risks-ui';
+  let protocolHostPort = import.meta.env.DEV ? 'http://localhost:5173' : 'http://localhost:3000';
+  let redirectUri = import.meta.env.APP_REDIRECT_URI ?? (protocolHostPort + import.meta.env.BASE_URL);
+
+  const oidcConfig: AuthProviderProps = {
+    authority: authority,
+    redirect_uri: redirectUri,
+    post_logout_redirect_uri: redirectUri,
+    client_id: clientId,
   }
 
   return (
-    <ReactKeycloakProvider
-      authClient={keycloak}
-      initOptions={initOptions}
-    >
-      <Outlet />
-    </ReactKeycloakProvider>
+    <AuthProvider{...oidcConfig}>
+      <WithAxios>
+        <Outlet />
+      </WithAxios>
+    </AuthProvider>
   );
+}
+
+// Must be called within AuthProvider, because it uses useAuth().
+// Otherwise, react will throw an exception and crash.
+function WithAxios({ children }: { children: React.ReactNode }): React.ReactElement {
+  const auth = useAuth();
+  const baseURL = encodeURI(import.meta.env.API_BASE_URL ?? "http://localhost:8080/api")
+  const axiosInstance = axios.create({ baseURL })
+
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      config.headers.authorization =
+        !auth.isLoading && auth.isAuthenticated
+          ? `Bearer ${auth.user?.access_token ?? ''}`
+          : undefined
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  )
+
+  configure({ axios: axiosInstance })
+
+  return (<>{children}</>)
 }
 
 // noinspection JSUnusedGlobalSymbols

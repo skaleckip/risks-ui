@@ -2,10 +2,10 @@
 
 import React from "react";
 import type { Route } from "./+types/risks-assess";
-import { useNormanAxios } from "~/hooks/norman-axios";
 import type { RiskWideDto } from "~/models/risks";
 import type { PageDto } from "~/models/shared";
 import { RiskListAssess } from "~/components/risk-list-assess";
+import useAxios from "axios-hooks";
 
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
@@ -17,7 +17,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Risks({ params }: Route.ComponentProps): React.ReactElement {
   const url = encodeURI(`/risks-by-owner/${params.ownerUsername}?pageNumber=0&pageSize=10`);
-  const [{ data, loading, error }] = useNormanAxios<PageDto<RiskWideDto>>(url);
+  const [{ data, loading, error }] = useAxios<PageDto<RiskWideDto>>(url);
 
   if (loading) {
     return (<p>Loading ...</p>)
