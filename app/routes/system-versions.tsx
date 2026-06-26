@@ -1,7 +1,7 @@
 import React from "react";
 import type { Route } from "./+types/system-versions";
-import { useNormanAxios } from "~/hooks/norman-axios";
 import { SystemVersionList } from "~/components/system-version-list";
+import useAxios from "axios-hooks";
 
 // noinspection JSUnusedGlobalSymbols
 export function meta({}: Route.MetaArgs) {
@@ -13,7 +13,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function SystemVersions(): React.ReactElement {
   const url = encodeURI(`/system-versions`);
-  const [{ data, loading, error }] = useNormanAxios(url)
+  const [{ data, loading, error }] = useAxios(url)
   if (loading) {
     return (<p>Loading ...</p>)
   }

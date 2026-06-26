@@ -1,7 +1,6 @@
 import React from "react";
 import type { SystemVersionDto } from "~/models/system-versions";
 import { useNavigate } from "react-router";
-import { useKeycloak } from "@react-keycloak/web";
 
 export interface SystemVersionListProps {
   systemVersions: SystemVersionDto[]
@@ -9,7 +8,6 @@ export interface SystemVersionListProps {
 
 export function SystemVersionList({ systemVersions }: SystemVersionListProps): React.ReactElement {
   const navigate = useNavigate();
-  const { keycloak } = useKeycloak();
 
   return (
     <table className="table table-zebra">
@@ -28,22 +26,16 @@ export function SystemVersionList({ systemVersions }: SystemVersionListProps): R
             <td>{systemVersion.systemClass}</td>
             <td>{systemVersion.validFrom}</td>
             <td className="flex flex-row gap-2">
-              {keycloak.hasRealmRole("auditor") ? (
-                <button
-                  onClick={() => navigate("/risks-criteria/" + systemVersion.id)}
-                  className="btn btn-primary">
-                  Criteria
-                </button>
-              ) : <></>
-              }
-              {keycloak.hasRealmRole("auditor") ? (
-                <button
-                  onClick={() => navigate("/risks-ident/" + systemVersion.id)}
-                  className="btn btn-primary">
-                  Identify risks
-                </button>
-              ) : <></>
-              }
+              <button
+                onClick={() => navigate("/risks-criteria/" + systemVersion.id)}
+                className="btn btn-primary">
+                Criteria
+              </button>
+              <button
+                onClick={() => navigate("/risks-ident/" + systemVersion.id)}
+                className="btn btn-primary">
+                Identify risks
+              </button>
             </td>
           </tr>
         ))}
