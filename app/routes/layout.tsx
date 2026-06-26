@@ -7,7 +7,7 @@ import type { UiDto } from "~/api/ui";
 
 export default function Layout(): React.ReactElement {
   const auth = useAuth()
-  return !auth.isLoading && auth.isAuthenticated
+  return auth.isAuthenticated
     ? <PrivateLayout />
     : <PublicLayout />
 }

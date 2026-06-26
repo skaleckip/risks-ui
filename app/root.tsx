@@ -3,7 +3,7 @@ import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, 
 import type { Route } from "./+types/root";
 import "./app.css";
 
-import React, { useEffect } from "react";
+import React, { useLayoutEffect } from "react";
 import { AuthProvider, type AuthProviderProps, useAuth } from "react-oidc-context";
 import axios from "axios";
 import { configure } from "axios-hooks";
@@ -42,7 +42,7 @@ export default function App() {
   }
 
   return (
-    <AuthProvider{...oidcConfig}>
+    <AuthProvider {...oidcConfig}>
       <WithAxios>
         <Outlet />
       </WithAxios>
@@ -56,8 +56,16 @@ function WithAxios({ children }: { children: React.ReactNode }): React.ReactElem
   const auth = useAuth();
   const baseURL = encodeURI(import.meta.env.API_BASE_URL ?? "http://localhost:8080/api")
 
-  useEffect(() => {
-    if (import.meta.env.DEV) console.log("Setting up Axios")
+  // Regular useEffect would run after layout rendering.
+  // Typical effects may initiate long-lasting operations
+  // therefore, they are executed after render finishes.
+  // Unfortunately, we need to reconfigure an Axios instance
+  // BEFORE the layout renders. Why? Well, layout will SEND
+  // (via axios) questions to the backend about pages available
+  // to the user. That is why we need Axios to be reconfigured
+  // earlier. To achieve this, we make use of the useLayoutEffect,
+  // which executes straight away.
+  useLayoutEffect(() => {
     const axiosInstance = axios.create({ baseURL })
     const reqInt = axiosInstance.interceptors.request.use(
       (config) => {
@@ -75,11 +83,9 @@ function WithAxios({ children }: { children: React.ReactNode }): React.ReactElem
     configure({ axios: axiosInstance })
 
     return () => {
-      if (import.meta.env.DEV) console.log("Tearing down up Axios")
       axiosInstance.interceptors.request.eject(reqInt)
     }
-  }, [auth])
-
+  }, [auth.isAuthenticated, auth.user])
 
   return (<>{children}</>)
 }
