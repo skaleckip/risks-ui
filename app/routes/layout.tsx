@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from "react-router";
 import { useAuth } from "react-oidc-context";
 import useAxios from "axios-hooks";
 import type { User } from "oidc-client-ts";
+import type { UiDto } from "~/api/ui";
 
 export default function Layout(): React.ReactElement {
   const auth = useAuth()
@@ -41,7 +42,6 @@ function PublicLayout() {
   )
 }
 
-
 function PrivateLayout() {
   const auth = useAuth()
   const navigate = useNavigate()
@@ -49,7 +49,7 @@ function PrivateLayout() {
   // We will ask backand if are allowed to show some options
   // Todo, if the call fails, we should show an error somewhere!
   const url = encodeURI(`/ui/system-versions`);
-  const [{ data, loading, error }] = useAxios<Boolean>(url)
+  const [{ data, loading, error }] = useAxios<UiDto>(url)
 
   const capitals = userCapitals(auth.user)
   const userName = auth.user?.profile?.preferred_username ?? ''
@@ -99,7 +99,7 @@ function PrivateLayout() {
               </button>
             </li>
 
-            {(!loading && !error && data) &&
+            {(!loading && !error && data?.showSystemVersions) &&
               <li>
                 <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                         data-tip="Normative systems"

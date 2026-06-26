@@ -3,7 +3,7 @@ import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, 
 import type { Route } from "./+types/root";
 import "./app.css";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { AuthProvider, type AuthProviderProps, useAuth } from "react-oidc-context";
 import axios from "axios";
 import { configure } from "axios-hooks";
@@ -55,22 +55,31 @@ export default function App() {
 function WithAxios({ children }: { children: React.ReactNode }): React.ReactElement {
   const auth = useAuth();
   const baseURL = encodeURI(import.meta.env.API_BASE_URL ?? "http://localhost:8080/api")
-  const axiosInstance = axios.create({ baseURL })
 
-  axiosInstance.interceptors.request.use(
-    (config) => {
-      config.headers.authorization =
-        !auth.isLoading && auth.isAuthenticated
-          ? `Bearer ${auth.user?.access_token ?? ''}`
-          : undefined
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
+  useEffect(() => {
+    if (import.meta.env.DEV) console.log("Setting up Axios")
+    const axiosInstance = axios.create({ baseURL })
+    const reqInt = axiosInstance.interceptors.request.use(
+      (config) => {
+        config.headers.authorization =
+          !auth.isLoading && auth.isAuthenticated
+            ? `Bearer ${auth.user?.access_token ?? ''}`
+            : undefined
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    )
+
+    configure({ axios: axiosInstance })
+
+    return () => {
+      if (import.meta.env.DEV) console.log("Tearing down up Axios")
+      axiosInstance.interceptors.request.eject(reqInt)
     }
-  )
+  }, [auth])
 
-  configure({ axios: axiosInstance })
 
   return (<>{children}</>)
 }
