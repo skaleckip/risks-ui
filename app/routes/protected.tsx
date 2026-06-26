@@ -12,7 +12,10 @@ export default function Protected(): React.ReactElement {
   if (keycloak.authenticated) {
     return <Outlet />;
   } else {
-    keycloak.login().then();
+    keycloak.login({
+      // Todo, Should we redirect if the route is allowed for the user?
+      redirectUri: window.location.origin + import.meta.env.BASE_URL
+    }).then();
     return <></>;
   }
 }
