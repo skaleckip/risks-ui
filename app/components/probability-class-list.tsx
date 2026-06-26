@@ -1,5 +1,5 @@
 import React from "react";
-import type { ProbabilityClassDto } from "~/models/system-versions";
+import type { ProbabilityClassDto } from "~/api/system-versions";
 
 export interface ProbabilityClassListProps {
   classes: ProbabilityClassDto[]

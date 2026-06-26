@@ -1,5 +1,5 @@
 import React from "react";
-import type { SystemVersionDto } from "~/models/system-versions";
+import type { SystemVersionDto } from "~/api/system-versions";
 import { useNavigate } from "react-router";
 
 export interface SystemVersionListProps {

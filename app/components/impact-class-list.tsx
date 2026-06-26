@@ -1,5 +1,5 @@
 import React from "react";
-import type { ImpactClassDto } from "~/models/system-versions";
+import type { ImpactClassDto } from "~/api/system-versions";
 
 export interface ImpactClassListProps {
   classes: ImpactClassDto[]

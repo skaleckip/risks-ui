@@ -1,5 +1,5 @@
 import React from "react";
-import type { RiskLevelDto } from "~/models/system-versions";
+import type { RiskLevelDto } from "~/api/system-versions";
 
 export interface RiskLevelListProps {
   levels: RiskLevelDto[]

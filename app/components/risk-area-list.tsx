@@ -1,5 +1,5 @@
 import React from "react";
-import type { RiskAreaDto } from "~/models/system-versions";
+import type { RiskAreaDto } from "~/api/system-versions";
 
 export interface RiskAreaListProps {
   areas: RiskAreaDto[]

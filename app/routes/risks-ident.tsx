@@ -2,8 +2,8 @@
 
 import React from "react";
 import type { Route } from "./+types/risks-ident";
-import type { RiskWideDto } from "~/models/risks";
-import type { PageDto } from "~/models/shared";
+import type { RiskWideDto } from "~/api/risks";
+import type { PageDto } from "~/api/shared";
 import { RiskListForIdentification } from "~/components/risk-list-ident";
 import useAxios from "axios-hooks";
 

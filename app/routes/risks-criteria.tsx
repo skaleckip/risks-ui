@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { ProbabilityClassList } from "~/components/probability-class-list";
 import { ImpactClassList } from "~/components/impact-class-list";
 import { RiskLevelList } from "~/components/risk-level-list";
-import type { ImpactClassDto, ProbabilityClassDto, RiskLevelDto } from "~/models/system-versions";
+import type { ImpactClassDto, ProbabilityClassDto, RiskLevelDto } from "~/api/system-versions";
 import { RiskAreaList } from "~/components/risk-area-list";
 import useAxios from "axios-hooks";
 

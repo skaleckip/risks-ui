@@ -1,4 +1,4 @@
-import type { ImpactClassDto, ProbabilityClassDto } from "~/models/system-versions";
+import type { ImpactClassDto, ProbabilityClassDto } from "~/api/system-versions";
 
 export interface RiskWideDto {
   id: string

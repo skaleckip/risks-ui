@@ -1,4 +1,4 @@
-import type { RiskWideDto } from "~/models/risks";
+import type { RiskWideDto } from "~/api/risks";
 import React from "react";
 
 export interface RiskListProps {
