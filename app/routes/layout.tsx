@@ -7,6 +7,23 @@ import type { UiDto } from "~/api/ui";
 
 export default function Layout(): React.ReactElement {
   const auth = useAuth()
+  // noinspection SpellCheckingInspection
+  switch (auth.activeNavigator) {
+    case "signinSilent":
+      return (<div>Signing you in ...</div>)
+    case "signoutRedirect":
+      return (<div>Signing you out ...</div>)
+  }
+
+  if (auth.isLoading) {
+    return (<div>Loading ...</div>)
+  }
+
+  if (auth.error) {
+    console.log(`${auth.error.source} caused ${auth.error.message}`)
+    return (<div>Authorization error, check console.</div>)
+  }
+
   return auth.isAuthenticated
     ? <PrivateLayout />
     : <PublicLayout />
