@@ -7,6 +7,7 @@ import React, { useLayoutEffect } from "react";
 import { AuthProvider, type AuthProviderProps, useAuth } from "react-oidc-context";
 import axios from "axios";
 import { configure } from "axios-hooks";
+import type { User } from "oidc-client-ts";
 
 // noinspection JSUnusedGlobalSymbols
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -28,17 +29,37 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+// noinspection SpellCheckingInspection
 export default function App() {
   let authority = import.meta.env.APP_AUTHORITY ?? 'http://localhost:9090/realms/norman';
   let clientId = import.meta.env.APP_CLIENT_ID ?? 'risks-ui';
   let protocolHostPort = import.meta.env.DEV ? 'http://localhost:5173' : 'http://localhost:3000';
   let redirectUri = import.meta.env.APP_REDIRECT_URI ?? (protocolHostPort + import.meta.env.BASE_URL);
 
+  // After the react-oidc-contex documentation:
+  // "You must provide an implementation of onSigninCallback to oidcConfig
+  // to remove the payload from the URL upon successful login.
+  // Otherwise, if you refresh the page, and the payload is still there,
+  // signinSilent - which handles renewing your token - won't work.
+  // A working implementation is already in the code here."
+  // And the provided link is:
+  // https://github.com/authts/react-oidc-context/blob/f175dcba6ab09871b027d6a2f2224a17712b67c5/src/AuthProvider.tsx#L20-L30
+  // noinspection SpellCheckingInspection
+  const onSigninCallback = (_user: User | void): void => {
+    window.history.replaceState(
+      {},
+      document.title,
+      window.location.pathname
+    );
+  }
+
+  // noinspection SpellCheckingInspection
   const oidcConfig: AuthProviderProps = {
     authority: authority,
     redirect_uri: redirectUri,
     post_logout_redirect_uri: redirectUri,
     client_id: clientId,
+    onSigninCallback
   }
 
   return (
